@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+int main()
+{
+	int count = 0;
+	int a, b, re;
+	scanf("%d/%d", &a, &b);
+
+	if (a >= 10 && b < 100 && a < b)
+	{
+		printf("0.");
+
+		while (count < 200)
+		{
+			a *= 10;
+			re = a / b;
+			printf("%d", re);
+			a %= b;
+			if (a != 0)
+				count++;
+			else
+				break;
+		}
+		printf("\n");
+	}
+
+	
+
+	return 0;
+}
