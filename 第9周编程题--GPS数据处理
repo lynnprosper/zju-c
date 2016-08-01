@@ -14,7 +14,11 @@ int main()
 		scanf("%s", s);
 		if (isgprmc(s))
 		{
-			sscanf(&s[7], "%2s""%2s""%2s", h, m, se);
+			char *t = s;
+			while (*t != ',')
+				t++;
+
+			sscanf(t +1, "%2s""%2s""%2s", h, m, se);
 		}
 	} while (s[0] != 'E');		//用sscanf提取时间字符到“h”，“m”和“se”里。
 	sscanf(h, "%d", &hn);
@@ -29,18 +33,24 @@ int isgprmc(char *p)
 {
 	int i;
 	char *s;
-	char calchecksum = '\0';
-	char recvchecksum;
-	for (i = 1; p[i] != '*'; i++)
+	int calchecksum = 0;
+	int recvchecksum;
+	/*char calchecksum = '\0';
+	char recvchecksum;*/
+	if (p[5] == 'C')		//判断是否是GPRMC语句，不是输出0。
 	{
-		calchecksum ^= (int)p[i];
+		for (i = 1; p[i] != '*'; i++)
+		{
+			calchecksum ^= (int)p[i];
+		}
+		s = p + i + 1;
+		recvchecksum = (*s > '9' ? *s - 'A' + 10 : *s - '0') << 4;
+		s++;
+		recvchecksum += (*s > '9' ? *s - 'A' + 10 : *s - '0');	//16进制转换为10进制
+		if (calchecksum == recvchecksum)
+			return 1;
+		else
+			return 0;
 	}
-	s = p + i + 1;
-	recvchecksum = (*s > '9' ? *s - 'A' + 10 : *s - '0') << 4;
-	s++;
-	recvchecksum += (*s > '9' ? *s - 'A' + 10 : *s - '0');	//16进制转换为10进制
-	if (calchecksum == recvchecksum)
-		return 1;
-	else
-		return 0;
+	return 0;
 }
